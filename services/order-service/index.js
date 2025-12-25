@@ -58,6 +58,123 @@ app.post("/orders", async (req, res) => {
   }
 });
 
+// PUT /orders/:id - update order (quantity and product/user if needed)
+app.put("/orders/:id", async (req, res) => {
+  try {
+    const { userId, productId, quantity } = req.body;
+    const { id } = req.params;
+
+    if (!userId || !productId || !quantity || quantity < 1) {
+      return res.status(400).json({ message: "userId, productId and quantity (>=1) are required" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ message: "Invalid userId or productId" });
+    }
+
+    const order = await Order.findByIdAndUpdate(
+      id,
+      { userId, productId, quantity },
+      { new: true, runValidators: true }
+    );
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.json(order);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to update order" });
+  }
+});
+
+// DELETE /orders/:id - delete order
+app.delete("/orders/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleted = await Order.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.status(204).send();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to delete order" });
+  }
+});
+
+// GET /orders/:id - get single order
+app.get("/orders/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const order = await Order.findById(id);
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.json(order);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch order" });
+  }
+});
+
+// PUT /orders/:id - update order
+app.put("/orders/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { userId, productId, quantity } = req.body;
+
+    if (quantity != null && quantity < 1) {
+      return res.status(400).json({ message: "quantity must be >= 1" });
+    }
+
+    if (userId && !mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid userId" });
+    }
+
+    if (productId && !mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ message: "Invalid productId" });
+    }
+
+    const updated = await Order.findByIdAndUpdate(
+      id,
+      { userId, productId, quantity },
+      { new: true, runValidators: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.json(updated);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to update order" });
+  }
+});
+
+// DELETE /orders/:id - delete order
+app.delete("/orders/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleted = await Order.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.status(204).send();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to delete order" });
+  }
+});
+
 const port = process.env.PORT_ORDERS || 3003;
 
 connectDB().then(() => {
