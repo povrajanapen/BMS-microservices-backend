@@ -1,4 +1,4 @@
-# E-commerce Backend (Node.js + Express + MongoDB)
+# Bookstore Management System Backend (Node.js + Express + MongoDB)
 
 This folder contains three small services used by the Next.js frontend:
 
