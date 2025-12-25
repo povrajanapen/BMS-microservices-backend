@@ -50,19 +50,25 @@ Or without nodemon:
 
 ## Frontend URLs
 
-The current frontend calls these URLs:
+The Next.js frontend reads the backend base URLs from the root `.env` file using these variables:
 
-- Users: http://user-service:3001/users
-- Products: http://product-service:3002/products
-- Orders: http://order-service:3003/orders
+- `NEXT_PUBLIC_USERS_SERVICE_URL`
+- `NEXT_PUBLIC_PRODUCTS_SERVICE_URL`
+- `NEXT_PUBLIC_ORDERS_SERVICE_URL`
 
-For local development without Docker or custom hostnames, you can update the frontend to use `http://localhost:<port>` instead, for example:
+In your current setup these point to the deployed Render services, for example:
 
-- http://localhost:3001/users
-- http://localhost:3002/products
-- http://localhost:3003/orders
+- Users: `https://users-service-ngb3.onrender.com/users`
+- Products: `https://product-service-ad0t.onrender.com/products`
+- Orders: `https://order-service-12rh.onrender.com/orders`
 
-The response shapes match what the frontend expects:
+For local development, you can instead set the `.env` values to use your local ports:
+
+- `NEXT_PUBLIC_USERS_SERVICE_URL=http://localhost:3001`
+- `NEXT_PUBLIC_PRODUCTS_SERVICE_URL=http://localhost:3002`
+- `NEXT_PUBLIC_ORDERS_SERVICE_URL=http://localhost:3003`
+
+The services respond with the following shapes, which the frontend expects:
 
 - User: `{ _id, name, email }`
 - Product: `{ _id, title, author, price }`

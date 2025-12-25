@@ -154,7 +154,7 @@ app.put("/orders/:id", async (req, res) => {
     res.json(updated);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Failed to update order" });
+    res.status(500).json({ message: "Failed to update ordersssss" });
   }
 });
 
