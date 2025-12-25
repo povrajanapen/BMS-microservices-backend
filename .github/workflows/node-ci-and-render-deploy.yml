@@ -1,0 +1,63 @@
+name: Node.js CI + Render deploy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install dependencies
+        run: npm install
+
+      # Uncomment these steps if/when you add scripts
+      # - name: Lint code
+      #   run: npm run lint
+
+      # - name: Run tests
+      #   run: npm test
+
+  deploy:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger Render deploy hooks
+        env:
+          RENDER_DEPLOY_HOOK_USERS: ${{ secrets.RENDER_DEPLOY_HOOK_USERS }}
+          RENDER_DEPLOY_HOOK_PRODUCTS: ${{ secrets.RENDER_DEPLOY_HOOK_PRODUCTS }}
+          RENDER_DEPLOY_HOOK_ORDERS: ${{ secrets.RENDER_DEPLOY_HOOK_ORDERS }}
+        run: |
+          set -e
+          echo "Triggering Render deploy hooks (if configured)..."
+
+          trigger() {
+            local url="$1"
+            local name="$2"
+            if [ -n "$url" ]; then
+              echo "Triggering $name..."
+              curl -fsSL -X POST "$url" || {
+                echo "Failed to trigger $name" >&2
+                exit 1
+              }
+            else
+              echo "No hook configured for $name (skipping)"
+            fi
+          }
+
+          trigger "$RENDER_DEPLOY_HOOK_USERS" "users-service"
+          trigger "$RENDER_DEPLOY_HOOK_PRODUCTS" "products-service"
+          trigger "$RENDER_DEPLOY_HOOK_ORDERS" "orders-service"

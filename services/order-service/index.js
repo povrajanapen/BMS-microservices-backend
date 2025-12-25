@@ -175,10 +175,10 @@ app.delete("/orders/:id", async (req, res) => {
   }
 });
 
-const port = process.env.PORT_ORDERS || 3003;
+const PORT = process.env.PORT || 3003;
 
 connectDB().then(() => {
-  app.listen(port, () => {
-    console.log(`Order service running on port ${port}`);
+  app.listen(PORT, () => {
+    console.log(`Order service running on port ${PORT}`);
   });
 });

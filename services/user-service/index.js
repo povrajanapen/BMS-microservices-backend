@@ -167,7 +167,7 @@ app.delete("/users/:id", async (req, res) => {
   }
 });
 
-const port = process.env.PORT_USERS || 3001;
+const PORT = process.env.PORT || 3001;
 
 const seedDefaultUser = async () => {
   try {
@@ -187,8 +187,8 @@ const seedDefaultUser = async () => {
 connectDB()
   .then(async () => {
     await seedDefaultUser();
-    app.listen(port, () => {
-      console.log(`User service running on port ${port}`);
+    app.listen(PORT, () => {
+      console.log(`User service running on port ${PORT}`);
     });
   })
   .catch((err) => {

@@ -158,10 +158,10 @@ app.delete("/products/:id", async (req, res) => {
   }
 });
 
-const port = process.env.PORT_PRODUCTS || 3002;
+const PORT = process.env.PORT || 3002;
 
 connectDB().then(() => {
-  app.listen(port, () => {
-    console.log(`Product service running on port ${port}`);
+  app.listen(PORT, () => {
+    console.log(`Product service running on port ${PORT}`);
   });
 });
